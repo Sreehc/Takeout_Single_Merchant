@@ -57,7 +57,7 @@ public interface SetmealMapper {
      * 根据id查询套餐数据
      */
     @Select("select * from setmeal where id = #{id}")
-    SetmealVO getById(Long id);
+    Setmeal getById(Long id);
 
 
     /**
