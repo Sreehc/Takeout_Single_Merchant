@@ -90,5 +90,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCartMapper.deleteByUserId(userId);
     }
 
+    /**
+     * 删除购物车中的一个商品
+     */
+    @Override
+    public void sub(ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartMapper.delete(shoppingCartDTO);
+    }
+
 
 }
