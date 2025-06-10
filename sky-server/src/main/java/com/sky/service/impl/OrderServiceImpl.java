@@ -310,7 +310,7 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
         Orders orders = orderMapper.getById(ordersRejectionDTO.getId());
-        if (orders == null || orders.getStatus() != Orders.CONFIRMED){
+        if (orders == null || orders.getStatus() != Orders.TO_BE_CONFIRMED){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         orders.setStatus(Orders.CANCELLED);
@@ -336,7 +336,7 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public void delivery(Long id) {
         Orders orders = orderMapper.getById(id);
-        if (orders == null || orders.getStatus() != Orders.DELIVERY_IN_PROGRESS){
+        if (orders == null || orders.getStatus() != Orders.CONFIRMED){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
