@@ -49,7 +49,7 @@ public interface OrderMapper {
     /**
      * 历史订单分页查询
      */
-    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+    Page<OrderVO> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询订单

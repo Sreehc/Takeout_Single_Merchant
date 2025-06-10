@@ -190,7 +190,7 @@ public class OrderServiceImpl  implements OrderService {
         ordersPageQueryDTO.setStatus(status);
 
         // 分页条件查询
-        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
 
         //由接口可知需要封装为orderVO类型：订单菜品信息orderDishes，订单详情orderDetailList
         List<OrderVO> list = new ArrayList();
@@ -253,7 +253,7 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public PageResult pageQuery4Admin(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
-        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<OrderVO> page = orderMapper.pageQuery(ordersPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
     }
 
