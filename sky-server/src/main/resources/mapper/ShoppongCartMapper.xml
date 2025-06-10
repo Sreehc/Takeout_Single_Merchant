@@ -4,6 +4,7 @@
 <mapper namespace="com.sky.mapper.ShoppingCartMapper">
 
 
+
     <select id="list" resultType="com.sky.entity.ShoppingCart">
         select * from shopping_cart
         <where>
@@ -31,4 +32,13 @@
         </where>
     </delete>
 
+
+    <insert id="insertBatch">
+        insert into shopping_cart (name,user_id,image,dish_id,setmeal_id,dish_flavor,number,amount,create_time)
+        values
+        <foreach collection="shoppingCartList" item="shoppingCart" separator=",">
+            (#{shoppingCart.name},#{shoppingCart.userId},#{shoppingCart.image},#{shoppingCart.dishId},#{shoppingCart.setmealId},#{shoppingCart.dishFlavor},#{shoppingCart.number},
+            #{shoppingCart.amount},#{shoppingCart.createTime})
+        </foreach>
+    </insert>
 </mapper>

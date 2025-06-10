@@ -55,4 +55,10 @@ public interface OrderMapper {
      */
     @Select("select * from orders where id = #{id}")
     Orders getById(Long id);
+
+    /**
+     * 订单取消
+     */
+    @Update("update orders set status = 6 where id = #{id}")
+    void cancel(Long id);
 }
