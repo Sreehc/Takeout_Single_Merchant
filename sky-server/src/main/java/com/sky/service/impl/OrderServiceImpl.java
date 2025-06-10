@@ -9,6 +9,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.*;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
@@ -157,10 +158,13 @@ public class OrderServiceImpl  implements OrderService {
         log.info("调用updateStatus，用于替换微信支付更新数据库状态的问题");
         orderMapper.updateStatus(OrderStatus, OrderPaidStatus, check_out_time, orderNumber);
 
+
+        // 根据订单号查询订单
+        Orders ordersDB = orderMapper.getByNumber(orderNumber);
         //通过WebSocket向客户端推送消息
         Map map = new HashMap();
         map.put("type", 1);
-        map.put("orderId", orderNumber);
+        map.put("orderId", ordersDB.getId());
         map.put("content", "订单号：" + orderNumber);
 
         String json = JSON.toJSONString(map);
@@ -292,8 +296,12 @@ public class OrderServiceImpl  implements OrderService {
      */
     @Override
     public void confirm( OrdersConfirmDTO ordersConfirmDTO) {
-        ordersConfirmDTO.setStatus(Orders.CONFIRMED);
-        orderMapper.confirm(ordersConfirmDTO);
+        Orders orders = orderMapper.getById(ordersConfirmDTO.getId());
+        if (orders == null || orders.getStatus() != Orders.TO_BE_CONFIRMED){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        orders.setStatus(Orders.CONFIRMED);
+        orderMapper.update(orders);
     }
 
     /**
@@ -301,7 +309,12 @@ public class OrderServiceImpl  implements OrderService {
      */
     @Override
     public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
-        orderMapper.rejection(ordersRejectionDTO);
+        Orders orders = orderMapper.getById(ordersRejectionDTO.getId());
+        if (orders == null || orders.getStatus() != Orders.CONFIRMED){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        orders.setStatus(Orders.CANCELLED);
+        orderMapper.update(orders);
     }
 
     /**
@@ -309,7 +322,12 @@ public class OrderServiceImpl  implements OrderService {
      */
     @Override
     public void cancel(OrdersCancelDTO ordersCancelDTO) {
-        orderMapper.cancel(ordersCancelDTO);
+        Orders orders = orderMapper.getById(ordersCancelDTO.getId());
+        if (orders == null || orders.getStatus() == Orders.TO_BE_CONFIRMED){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        orders.setStatus(Orders.CANCELLED);
+        orderMapper.update(orders);
     }
 
     /**
@@ -317,7 +335,12 @@ public class OrderServiceImpl  implements OrderService {
      */
     @Override
     public void delivery(Long id) {
-        orderMapper.delivery(id);
+        Orders orders = orderMapper.getById(id);
+        if (orders == null || orders.getStatus() != Orders.DELIVERY_IN_PROGRESS){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(orders);
     }
 
     /**
@@ -325,7 +348,29 @@ public class OrderServiceImpl  implements OrderService {
      */
     @Override
     public void complete(Long id) {
-        orderMapper.complete(id);
+        Orders orders = orderMapper.getById(id);
+        if (orders == null || orders.getStatus() != Orders.DELIVERY_IN_PROGRESS){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        orders.setStatus(Orders.COMPLETED);
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 客户催单
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.getById(id);
+        if (orders == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Map map = new HashMap();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content", "订单号：" + orders.getNumber());
+
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
 

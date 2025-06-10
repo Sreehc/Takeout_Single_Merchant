@@ -61,41 +61,10 @@ public interface OrderMapper {
     @Select("select * from orders where id = #{id}")
     Orders getById(Long id);
 
-
     /**
      * 统计订单数据
      */
     OrderStatisticsVO statistics();
-
-    /**
-     * 确认订单
-     */
-    @Update("update orders set status = #{status} where id = #{id}")
-    void confirm(OrdersConfirmDTO ordersConfirmDTO);
-
-    /**
-     * 拒单
-     */
-    @Update("update orders set status = 7,rejection_reason = #{rejectionReason} where id = #{id}")
-    void rejection(OrdersRejectionDTO ordersRejectionDTO);
-
-    /**
-     * 取消订单
-     */
-    @Update("update orders set cancel_time = now(),status = 6,cancel_reason = #{cancelReason} where id = #{id}")
-    void cancel(OrdersCancelDTO ordersCancelDTO);
-
-    /**
-     * 派送订单
-     */
-    @Update("update orders set status = 4,delivery_time = now() where id = #{id}")
-    void delivery(Long id);
-
-    /**
-     * 完成订单
-     */
-    @Update("update orders set status = 5 where id = #{id}")
-    void complete(Long id);
 
     /**
      * 根据状态和下单时间查询订单
