@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderStatisticsVO;
@@ -68,4 +69,10 @@ public interface OrderMapper {
      * 统计订单数据
      */
     OrderStatisticsVO statistics();
+
+    /**
+     * 确认订单
+     */
+    @Update("update orders set status = #{status} where id = #{id}")
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
 }

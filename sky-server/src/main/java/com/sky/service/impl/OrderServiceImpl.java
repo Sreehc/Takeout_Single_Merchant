@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
@@ -229,11 +230,18 @@ public class OrderServiceImpl  implements OrderService {
         return orderVO;
     }
 
+    /**
+     * 用户取消订单
+     */
     @Override
     public void cancel(Long id) {
+
         orderMapper.cancel(id);
     }
 
+    /**
+     * 再来一单
+     */
     @Override
     @Transactional
     public void repetition(Long id) {
@@ -250,6 +258,9 @@ public class OrderServiceImpl  implements OrderService {
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
 
+    /**
+     * 管理端订单查询
+     */
     @Override
     public PageResult pageQuery4Admin(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
@@ -257,9 +268,21 @@ public class OrderServiceImpl  implements OrderService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    /**
+     * 统计订单数据
+     */
     @Override
     public OrderStatisticsVO statistics() {
         return orderMapper.statistics();
+    }
+
+    /**
+     * 订单确认
+     */
+    @Override
+    public void confirm( OrdersConfirmDTO ordersConfirmDTO) {
+        ordersConfirmDTO.setStatus(Orders.CONFIRMED);
+        orderMapper.confirm(ordersConfirmDTO);
     }
 
 
