@@ -35,4 +35,11 @@ public class OrderController {
         PageResult pageResult = orderService.pageQuery4Admin(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    @GetMapping("/statistics")
+    @ApiOperation("各个状态的订单数量统计")
+    public Result statistics(){
+        log.info("各个状态的订单数量统计");
+        return Result.success(orderService.statistics());
+    }
 }
