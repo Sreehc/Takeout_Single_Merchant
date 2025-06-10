@@ -52,4 +52,6 @@ public interface OrderService {
      * 再来一单
      */
     void repetition(Long id);
+
+    PageResult pageQuery4Admin(OrdersPageQueryDTO ordersPageQueryDTO);
 }

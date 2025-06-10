@@ -249,5 +249,12 @@ public class OrderServiceImpl  implements OrderService {
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
 
+    @Override
+    public PageResult pageQuery4Admin(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
+    }
+
 
 }
