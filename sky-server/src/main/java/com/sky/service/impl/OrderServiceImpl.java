@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
@@ -10,10 +13,12 @@ import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,4 +173,40 @@ public class OrderServiceImpl  implements OrderService {
 
         orderMapper.update(orders);
     }
+
+    @Override
+    public PageResult pageQuery4User(Integer pageNum, Integer pageSize, Integer status) {
+        //需要在查询功能之前开启分页功能：当前页的页码   每页显示的条数
+        PageHelper.startPage(pageNum, pageSize);
+
+        //封装所需的请求参数为DTO对象
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+
+        // 分页条件查询
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        //由接口可知需要封装为orderVO类型：订单菜品信息orderDishes，订单详情orderDetailList
+        List<OrderVO> list = new ArrayList();
+
+        // 查询出订单明细，并封装入OrderVO进行响应
+        if (page != null && page.getTotal() > 0) { //有订单才有必要接着查询订单详情信息
+            for (Orders orders : page) {
+                Long orderId = orders.getId();// 订单id
+
+                // 根据订单id,查询订单明细
+                List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(orderId);
+
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders, orderVO);
+                orderVO.setOrderDetailList(orderDetails);
+
+                list.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(), list);
+    }
+
+
 }
