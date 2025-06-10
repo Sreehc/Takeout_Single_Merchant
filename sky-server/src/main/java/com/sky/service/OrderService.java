@@ -37,4 +37,14 @@ public interface OrderService {
      * 历史订单查询
      */
     PageResult pageQuery4User(Integer page, Integer pageSize, Integer status);
+
+    /**
+     * 订单详情
+     */
+    OrderVO getOrderDetail(Long id);
+
+    /**
+     * 取消订单
+     */
+    void cancel(Long id);
 }

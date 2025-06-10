@@ -85,6 +85,7 @@ public class OrderServiceImpl  implements OrderService {
         order.setPhone(addressBook.getPhone());
         order.setConsignee(addressBook.getConsignee());
         order.setUserId(currentId);
+        order.setAddress(addressBook.getDetail());
         orderMapper.insert(order);
 
         //向订单明细表插入n条数据
@@ -174,6 +175,9 @@ public class OrderServiceImpl  implements OrderService {
         orderMapper.update(orders);
     }
 
+    /**
+     * 查询历史订单
+     */
     @Override
     public PageResult pageQuery4User(Integer pageNum, Integer pageSize, Integer status) {
         //需要在查询功能之前开启分页功能：当前页的页码   每页显示的条数
@@ -206,6 +210,27 @@ public class OrderServiceImpl  implements OrderService {
             }
         }
         return new PageResult(page.getTotal(), list);
+    }
+
+    /**
+     * 订单详情
+     */
+    @Override
+    public OrderVO getOrderDetail(Long id) {
+        Orders orders = orderMapper.getById(id);
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        if (orders != null) {
+            orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+        }
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        orderVO.setOrderDetailList(orderDetailList);
+        return orderVO;
+    }
+
+    @Override
+    public void cancel(Long id) {
+
     }
 
 
