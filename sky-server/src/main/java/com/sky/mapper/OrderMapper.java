@@ -1,10 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
+import com.sky.dto.*;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
@@ -82,4 +79,12 @@ public interface OrderMapper {
      * 统计指定时间区间内订单数量
      */
     Integer countOrderByMap(Map map);
+
+    /**
+     * 统计指定时间区间内销量排名前10
+     */
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin , LocalDateTime end);
+
+
+
 }
