@@ -77,4 +77,9 @@ public interface OrderMapper {
      * 统计指定时间区间的营业额数据
      */
     Double sumByMap(Map map);
+
+    /**
+     * 统计指定时间区间内订单数量
+     */
+    Integer countOrderByMap(Map map);
 }
