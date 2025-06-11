@@ -78,7 +78,7 @@ public interface OrderMapper {
     /**
      * 统计指定时间区间内订单数量
      */
-    Integer countOrderByMap(Map map);
+    Integer countByMap(Map map);
 
     /**
      * 统计指定时间区间内销量排名前10
