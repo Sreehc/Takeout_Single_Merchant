@@ -69,7 +69,7 @@
     </select>
 
 
-    <select id="countOrderByMap" resultType="java.lang.Integer">
+    <select id="countByMap" resultType="java.lang.Integer">
         select count(id) from orders
         <where>
             <if test="begin != null">and order_time &gt;= #{begin}</if>
